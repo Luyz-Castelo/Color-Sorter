@@ -1,0 +1,58 @@
+html {
+  position: relative;
+  min-height: 100%;
+  font-family: 'Consolas','Courier New', Courier, monospace;
+}
+
+body {
+  position: relative;
+  min-height: 100%;
+  height: 100%;
+}
+
+.container {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.color-container-basic .box {
+  width: 28.125px;
+  height: 28.125px;
+}
+
+.color-container-basic .box span {
+  display: none;
+}
+
+.color-container-complex .box {
+  width: 112.5px;
+  height: 112.5px;
+}
+
+.color-container-complex .box span {
+  display: block;
+}
+
+.box {
+  display: flex;
+  justify-content: center;
+}
+
+.box span {
+  background-color: #F0F0F0;
+  margin: auto;
+  padding: 1px;
+  border: 1px solid;
+}
+
+.buttons {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.buttons *{
+  width: 150px;
+  height: 80px;
+}
