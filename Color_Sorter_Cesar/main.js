@@ -91,11 +91,13 @@ function getRandomColor() {
 }
 
 function createRandomColoredBox(quantityOfTimes = 1) {
+  console.time(`createRandomColoredBox(${quantityOfTimes})`)
   const createdColors = createRandomColors(quantityOfTimes);
-
+  
   addColorsInStore(createdColors);
   addColorsInClustersStore(createdColors);
   addColorsDiv(createdColors);
+  console.timeEnd(`createRandomColoredBox(${quantityOfTimes})`)
 }
 
 function alternateBetweenBasicAndComplexVisualizationFunc() {
@@ -124,7 +126,7 @@ function sortColors() {
 
 function createRandomColors(quantityOfTimes = 1) {
   const createdColors = [];
-	console.time(`createRandomColors(${quantityOfTimes})`)
+	// console.time(`createRandomColors(${quantityOfTimes})`)
   let i = 0;
   while (i < quantityOfTimes) {
 		const randomColor = getRandomColor();
@@ -136,7 +138,7 @@ function createRandomColors(quantityOfTimes = 1) {
     createdColors.push(randomColor);
     i++;
   }
-	console.timeEnd(`createRandomColors(${quantityOfTimes})`)
+	// console.timeEnd(`createRandomColors(${quantityOfTimes})`)
   return createdColors;
 }
 

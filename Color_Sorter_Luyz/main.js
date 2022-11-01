@@ -92,8 +92,8 @@ function getRandomColor() {
 }
 
 function createRandomColoredBox(quantityOfTimes = 1) {
-	const colorContainerDiv = document.querySelector('#color-container');
 	console.time(`createRandomColoredBoxes(${quantityOfTimes})`)
+	const colorContainerDiv = document.querySelector('#color-container');
 	let i = 0;
 	while (i < quantityOfTimes) {
 		const randomColor = getRandomColor();
