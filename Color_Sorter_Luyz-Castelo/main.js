@@ -1,3 +1,5 @@
+import { countTimeSpentOnFunction } from "../helpers/countTimeSpentOnFunction.js";
+
 class Color {
   constructor(colorInRgb, colorInHsl, colorInHex) {
     this.colorInRGB = colorInRgb;
@@ -65,6 +67,9 @@ const CLUSTERS = [
 let VISUALIZATION_MODE = 'basic';
 
 function main() {
+	const redirectToChoicesPage = document.querySelector('#redirect-to-choices-page');
+	redirectToChoicesPage.addEventListener('click', () => window.location = '/index.html');
+
   const createRandomBoxColor = document.querySelector('#create-random-box-color-button');
   const createTenRandomBoxColor = document.querySelector('#create-ten-random-box-color-button');
   const createHundredRandomBoxColor = document.querySelector('#create-hundred-random-box-color-button');
@@ -72,12 +77,12 @@ function main() {
   const alternateBetweenBasicAndComplexVisualization = document.querySelector('#alternate-between-basic-and-complex-visualization');
   const orderColorContainer = document.querySelector('#order-color-container-button')
 
-  createRandomBoxColor.addEventListener('click', () => createRandomColoredBox());
-  createTenRandomBoxColor.addEventListener('click', () => createRandomColoredBox(10));
-  createHundredRandomBoxColor.addEventListener('click', () => createRandomColoredBox(100));
-  createThousandRandomBoxColor.addEventListener('click', () => createRandomColoredBox(1000));
+  createRandomBoxColor.addEventListener('click', () =>  countTimeSpentOnFunction(createRandomColoredBox, [1], `createRandomColoredBox`));
+  createTenRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [10], `createRandomColoredBox`));
+  createHundredRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [100], `createRandomColoredBox`));
+  createThousandRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [1000], `createRandomColoredBox`));
 	alternateBetweenBasicAndComplexVisualization.addEventListener('click', alternateBetweenBasicAndComplexVisualizationFunc)
-  orderColorContainer.addEventListener('click', orderColorContainerDiv)
+  orderColorContainer.addEventListener('click', () => countTimeSpentOnFunction(orderColorContainerDiv))
 }
 
 function getRandomColor() {
@@ -93,22 +98,20 @@ function getRandomColor() {
 }
 
 function createRandomColoredBox(quantityOfTimes = 1) {
-	console.time(`createRandomColoredBoxes(${quantityOfTimes})`)
 	const colorContainerDiv = document.querySelector('#color-container');
 	let i = 0;
 	while (i < quantityOfTimes) {
 		const randomColor = getRandomColor();
-
+		
 		if(COLORS_IN_SCREEN.includes(c => c.colorInHex.hexString === randomColor.colorInHex.hexString)) continue;
 		
 		COLORS_IN_SCREEN.push(randomColor);
 		
-		const colorBoxElement = createRandomColorBoxElement(randomColor);
+		const colorBoxElement = countTimeSpentOnFunction(createRandomColorBoxElement, [randomColor]);
 		colorContainerDiv.appendChild(colorBoxElement);
 		
 		i++;
 	}
-	console.timeEnd(`createRandomColoredBoxes(${quantityOfTimes})`)
 }
  
 function alternateBetweenBasicAndComplexVisualizationFunc() {
@@ -162,11 +165,9 @@ function updateDivStyle(div, color) {
 }
 
 function orderColorContainerDiv() {
-	console.time('orderColorContainerDiv')
   const colorContainerDiv = document.querySelector('#color-container');
   
 	const colorsInContainer = [...COLORS_IN_SCREEN]
-
   
   sortWithClusters(colorsInContainer)
 
@@ -175,9 +176,8 @@ function orderColorContainerDiv() {
 	const clusterColors = clustersWithColors.map(cluster => cluster.colors).flat();
 
 	colorContainerDiv.childNodes.forEach((node, index) => {
-		updateDivStyle(node, clusterColors[index])
+		countTimeSpentOnFunction(updateDivStyle, [node, clusterColors[index]]);
 	});
-	console.timeEnd('orderColorContainerDiv')
 }
 
 
@@ -360,6 +360,4 @@ function calculateHue(R, G, B)
 
 // -----------------------------------------------------------------------------------
 
-
 main();
-

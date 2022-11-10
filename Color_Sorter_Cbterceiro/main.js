@@ -65,6 +65,9 @@ const STORE = {
 };
 
 function main() {
+  const redirectToChoicesPage = document.querySelector('#redirect-to-choices-page');
+	redirectToChoicesPage.addEventListener('click', () => window.location = '/index.html');
+
   const createRandomBoxColor = document.querySelector('#create-random-box-color-button');
   const createTenRandomBoxColor = document.querySelector('#create-ten-random-box-color-button');
   const createHundredRandomBoxColor = document.querySelector('#create-hundred-random-box-color-button');
@@ -93,13 +96,11 @@ function getRandomColor() {
 }
 
 function createRandomColoredBox(quantityOfTimes = 1) {
-  console.time(`createRandomColoredBox(${quantityOfTimes})`)
   const createdColors = createRandomColors(quantityOfTimes);
-  
+
   addColorsInStore(createdColors);
   addColorsInClustersStore(createdColors);
   addColorsDiv(createdColors);
-  console.timeEnd(`createRandomColoredBox(${quantityOfTimes})`)
 }
 
 function alternateBetweenBasicAndComplexVisualizationFunc() {
