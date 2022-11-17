@@ -1,4 +1,5 @@
 import { countTimeSpentOnFunction } from "../helpers/countTimeSpentOnFunction.js";
+import { getLocalStorage } from "../helpers/getLocalStorage.js";
 
 class Color {
   constructor(colorInRgb, colorInHsl, colorInHex) {
@@ -77,15 +78,19 @@ function main() {
   const createTenRandomBoxColor = document.querySelector('#create-ten-random-box-color-button');
   const createHundredRandomBoxColor = document.querySelector('#create-hundred-random-box-color-button');
   const createThousandRandomBoxColor = document.querySelector('#create-thousand-random-box-color-button');
+  const sortColorContainer = document.querySelector('#order-color-container-button');
+	
   const alternateBetweenBasicAndComplexVisualization = document.querySelector('#alternate-between-basic-and-complex-visualization');
-  const sortColorContainer = document.querySelector('#order-color-container-button')
+	// const getTimesSpentOnFunctions = document.querySelector('#get-times-spent-on-functions');
 
   createRandomBoxColor.addEventListener('click', () =>  countTimeSpentOnFunction(createRandomColoredBox, [1], `createRandomColoredBox`));
   createTenRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [10], `createRandomColoredBox`));
   createHundredRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [100], `createRandomColoredBox`));
   createThousandRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [1000], `createRandomColoredBox`));
-	alternateBetweenBasicAndComplexVisualization.addEventListener('click', alternateBetweenBasicAndComplexVisualizationFunc)
-  sortColorContainer.addEventListener('click', () => countTimeSpentOnFunction(sortColors))
+  sortColorContainer.addEventListener('click', () => countTimeSpentOnFunction(sortColors));
+	
+	alternateBetweenBasicAndComplexVisualization.addEventListener('click', alternateBetweenBasicAndComplexVisualizationFunc);
+	// getTimesSpentOnFunctions.addEventListener('click', getLocalStorage);
 }
 
 function getRandomColor() {
