@@ -1,48 +1,54 @@
+import { setLocalStorage } from "./setLocalStorage.js";
+
 export function countTimeSpentOnFunction(functionToTest, functionArgs, functionName) {
   let functionResult;
-  let functionArgsOnTimer;
+  let functionArgsOnStorage;
 
   const getArgNameAndBaseValue = /(?<=\()(.*?)(?=\))/;
   const getArgBaseValue = /([ ][=][ =])\d+/;
 
   const functionArgsToPass = functionArgs || [];
-  const functionNameOnTimer = functionName || functionToTest.name;
+  const functionNameOnStorage = functionName || functionToTest.name;
   
-  /* add .join(', ') to this variable if you want to use it on the console.time and console.timeEnd
-  to show only the values used for the function */
+  /* add .join(', ') to this variable if you want to show only the values used by this function call */
   const functionArgsValues = functionArgsToPass.map(arg => {
     if (arg.nodeName) return JSON.stringify(arg, ['tagName', 'className']);
     return JSON.stringify(arg);
   });
   
-  /* use this variable if you want to print the args names and base values on the console.time and console.timeEnd statements */
+  /* use this variable if you want to show the args names and base values */
   // const functionArgsNamesAndBaseValues = functionToTest.toString().match(getArgNameAndBaseValue)[0];
 
-  /* add .join(', ') to this variable if you want to use it on the console.time and console.timeEnd
-  to show only the names of the args used by the function */
+  /* add .join(', ') to this variable if you want to show only the names of the args used by the function */
   // const functionArgsNamesWithoutBaseValues = functionArgsNamesAndBaseValues.split(', ').map(arg => {
   //   return arg.match(getArgBaseValue) ? arg.replace(arg.match(getArgBaseValue)[0], '') : arg;
   // });
 
-  /* use this variable if you want to print the args names and values used on the console.time and console.timeEnd statements */
+  /* use this variable if you want to show args names and values */
   // const functionArgsNamesAndValuesUsed = functionArgsNamesWithoutBaseValues.map((arg, index) => {
   //   return `${arg}: ${functionArgsValues[ifunctionArgsNamesWithoutBaseValuesndex]}`
   // });
 
-  // assign the value that you want to use on the time and timeEnd statements here or leave it blank
-  functionArgsOnTimer = functionArgsValues;
+  // assign the value that you want to show here or leave it blank
+  functionArgsOnStorage = functionArgsValues;
 
-  debugger
-
+  let start, end;
+  let timeSpentOnFunc = 0;
+  
   if (functionArgs?.length) {
-    console.time(`Time to run the function: ${functionNameOnTimer}(${functionArgsOnTimer})`);
+    start = performance.now();
     functionResult = functionToTest(...functionArgsToPass);
-    console.timeEnd(`Time to run the function: ${functionNameOnTimer}(${functionArgsOnTimer})`);
+    end = performance.now();
   } else {
-    console.time(`Time to run the function: ${functionNameOnTimer}()`);
+    start = performance.now();
     functionResult = functionToTest();
-    console.timeEnd(`Time to run the function: ${functionNameOnTimer}()`);
+    end = performance.now();
   }
+  
+  timeSpentOnFunc += end - start;
+  // `Time to run the function: ${functionNameOnTimerAndStorage}(${functionArgsOnTimer})`
+  setLocalStorage(`${functionNameOnStorage}(${functionArgsOnStorage})`, timeSpentOnFunc);
 
   return functionResult;
 }
+

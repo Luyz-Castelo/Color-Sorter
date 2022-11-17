@@ -67,6 +67,9 @@ const CLUSTERS = [
 let VISUALIZATION_MODE = 'basic';
 
 function main() {
+	localStorage.removeItem('timeSpentOnFunctions');
+	localStorage.setItem('timeSpentOnFunctions', JSON.stringify({}));
+
 	const redirectToChoicesPage = document.querySelector('#redirect-to-choices-page');
 	redirectToChoicesPage.addEventListener('click', () => window.location = '/index.html');
 
@@ -75,14 +78,14 @@ function main() {
   const createHundredRandomBoxColor = document.querySelector('#create-hundred-random-box-color-button');
   const createThousandRandomBoxColor = document.querySelector('#create-thousand-random-box-color-button');
   const alternateBetweenBasicAndComplexVisualization = document.querySelector('#alternate-between-basic-and-complex-visualization');
-  const orderColorContainer = document.querySelector('#order-color-container-button')
+  const sortColorContainer = document.querySelector('#order-color-container-button')
 
   createRandomBoxColor.addEventListener('click', () =>  countTimeSpentOnFunction(createRandomColoredBox, [1], `createRandomColoredBox`));
   createTenRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [10], `createRandomColoredBox`));
   createHundredRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [100], `createRandomColoredBox`));
   createThousandRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [1000], `createRandomColoredBox`));
 	alternateBetweenBasicAndComplexVisualization.addEventListener('click', alternateBetweenBasicAndComplexVisualizationFunc)
-  orderColorContainer.addEventListener('click', () => countTimeSpentOnFunction(orderColorContainerDiv))
+  sortColorContainer.addEventListener('click', () => countTimeSpentOnFunction(sortColors))
 }
 
 function getRandomColor() {
@@ -97,17 +100,17 @@ function getRandomColor() {
   return new Color(colorInRGB, colorInHsl, colorInHex)
 }
 
-function createRandomColoredBox(quantityOfTimes = 1) {
+function createRandomColoredBox(quantityOfColorsToBeCreated = 1) {
 	const colorContainerDiv = document.querySelector('#color-container');
 	let i = 0;
-	while (i < quantityOfTimes) {
+	while (i < quantityOfColorsToBeCreated) {
 		const randomColor = getRandomColor();
 		
 		if(COLORS_IN_SCREEN.includes(c => c.colorInHex.hexString === randomColor.colorInHex.hexString)) continue;
-		
+			
 		COLORS_IN_SCREEN.push(randomColor);
 		
-		const colorBoxElement = countTimeSpentOnFunction(createRandomColorBoxElement, [randomColor]);
+		const colorBoxElement = createRandomColorBoxElement(randomColor);
 		colorContainerDiv.appendChild(colorBoxElement);
 		
 		i++;
@@ -164,7 +167,7 @@ function updateDivStyle(div, color) {
 	div.style.backgroundColor = color.colorInHex.hexString;
 }
 
-function orderColorContainerDiv() {
+function sortColors() {
   const colorContainerDiv = document.querySelector('#color-container');
   
 	const colorsInContainer = [...COLORS_IN_SCREEN]
@@ -176,7 +179,7 @@ function orderColorContainerDiv() {
 	const clusterColors = clustersWithColors.map(cluster => cluster.colors).flat();
 
 	colorContainerDiv.childNodes.forEach((node, index) => {
-		countTimeSpentOnFunction(updateDivStyle, [node, clusterColors[index]]);
+		updateDivStyle(node, clusterColors[index]);
 	});
 }
 

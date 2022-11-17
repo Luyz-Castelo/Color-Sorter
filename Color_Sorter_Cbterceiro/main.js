@@ -1,3 +1,5 @@
+import { countTimeSpentOnFunction } from "../helpers/countTimeSpentOnFunction.js";
+
 class Color {
   constructor(colorInRgb, colorInHsl, colorInHex) {
     this.colorInRGB = colorInRgb;
@@ -72,15 +74,17 @@ function main() {
   const createTenRandomBoxColor = document.querySelector('#create-ten-random-box-color-button');
   const createHundredRandomBoxColor = document.querySelector('#create-hundred-random-box-color-button');
   const createThousandRandomBoxColor = document.querySelector('#create-thousand-random-box-color-button');
-  const alternateBetweenBasicAndComplexVisualization = document.querySelector('#alternate-between-basic-and-complex-visualization');
   const sortColorContainer = document.querySelector('#sort-color-container-button')
+  const alternateBetweenBasicAndComplexVisualization = document.querySelector('#alternate-between-basic-and-complex-visualization');
 
-  createRandomBoxColor.addEventListener('click', () => createRandomColoredBox());
-  createTenRandomBoxColor.addEventListener('click', () => createRandomColoredBox(10));
-  createHundredRandomBoxColor.addEventListener('click', () => createRandomColoredBox(100));
-  createThousandRandomBoxColor.addEventListener('click', () => createRandomColoredBox(1000));
+  createRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [1]));
+  createTenRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [10]));
+  createHundredRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [100]));
+  createThousandRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [1000]));
+  sortColorContainer.addEventListener('click', () => countTimeSpentOnFunction(sortColors))
+  
+
 	alternateBetweenBasicAndComplexVisualization.addEventListener('click', alternateBetweenBasicAndComplexVisualizationFunc)
-  sortColorContainer.addEventListener('click', sortColors)
 }
 
 function getRandomColor() {
@@ -114,22 +118,15 @@ function alternateBetweenBasicAndComplexVisualizationFunc() {
 }
 
 function sortColors() {
-  console.time('sortColors');
   sortColorsInClusters();
-  // console.timeEnd('sortColorsInClusters');
 
-  // console.time('updateStoreColorsBasedOnClusters');
   updateStoreColorsBasedOnClusters();
-  // console.timeEnd('updateStoreColorsBasedOnClusters');
 
-  // console.time('updateAllColorDivs');
   updateAllColorDivs();
-  console.timeEnd('sortColors');
 }
 
 function createRandomColors(quantityOfTimes = 1) {
   const createdColors = [];
-	// console.time(`createRandomColors(${quantityOfTimes})`)
   let i = 0;
   while (i < quantityOfTimes) {
 		const randomColor = getRandomColor();
@@ -141,7 +138,6 @@ function createRandomColors(quantityOfTimes = 1) {
     createdColors.push(randomColor);
     i++;
   }
-	// console.timeEnd(`createRandomColors(${quantityOfTimes})`)
   return createdColors;
 }
 
