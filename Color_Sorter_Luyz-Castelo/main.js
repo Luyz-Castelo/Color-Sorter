@@ -1,5 +1,4 @@
 import { countTimeSpentOnFunction } from "../helpers/countTimeSpentOnFunction.js";
-import { getLocalStorage } from "../helpers/getLocalStorage.js";
 
 class Color {
   constructor(colorInRgb, colorInHsl, colorInHex) {
@@ -43,34 +42,57 @@ class Cluster {
   }
 }
 
-// Here the concept of STORE is not used because i did not know about it :/
+// Here the concept of STORE is used, now that i refactored my code
 
-const COLORS_IN_SCREEN = []
+const STORE = {
+	colors_in_screen: [],
+	clusters: [
+    new Cluster('red', new RGBColor(255, 0, 0), []),
+    new Cluster('orange', new RGBColor(255, 128, 0), []),
+    new Cluster('yellow', new RGBColor(255, 255, 0), []),
+    new Cluster('chartreuse', new RGBColor(128, 255, 0), []),
+    new Cluster('green', new RGBColor(0, 255, 0), []),
+    new Cluster('spring green', new RGBColor(0, 255, 128), []),
+    new Cluster('cyan', new RGBColor(0, 255, 255), []),
+    new Cluster('azure', new RGBColor(0, 127, 255), []),
+    new Cluster('blue', new RGBColor(0, 0, 255), []),
+    new Cluster('violet', new RGBColor(127, 0, 255), []),
+    new Cluster('magenta', new RGBColor(255, 0, 255), []),
+    new Cluster('rose', new RGBColor(255, 0, 128), []),
+    new Cluster('black', new RGBColor(0, 0, 0), []),
+    new Cluster('grey', new RGBColor(235, 235, 235), []),
+    new Cluster('white', new RGBColor(255, 255, 255), []),
+	],
+	visualizationMode: 'basic',
+  timeSpentOnFunctions: [],
+};
 
-const CLUSTERS = [
-  new Cluster ('red', [255, 0, 0], []),
-  new Cluster ('orange', [255, 128, 0], []),
-  new Cluster ('yellow', [255, 255, 0], []),
-  new Cluster ('chartreuse', [128, 255, 0], []),
-  new Cluster ('green', [0, 255, 0], []),
-  new Cluster ('spring green', [0, 255, 128], []),
-  new Cluster ('cyan', [0, 255, 255], []),
-  new Cluster ('azure', [0, 127, 255], []),
-  new Cluster ('blue', [0, 0, 255], []),
-  new Cluster ('violet', [127, 0, 255], []),
-  new Cluster ('magenta', [255, 0, 255], []),
-  new Cluster ('rose', [255, 0, 128], []),
-  new Cluster ('black', [0, 0, 0], []),
-  new Cluster ('grey', [235, 235, 235], []),
-  new Cluster ('white', [255, 255, 255], []),
-];
+/*
+	// Here is how it was done in the past
+	const COLORS_IN_SCREEN = []
 
-let VISUALIZATION_MODE = 'basic';
+	const CLUSTERS = [
+		new Cluster ('red', [255, 0, 0], []),
+		new Cluster ('orange', [255, 128, 0], []),
+		new Cluster ('yellow', [255, 255, 0], []),
+		new Cluster ('chartreuse', [128, 255, 0], []),
+		new Cluster ('green', [0, 255, 0], []),
+		new Cluster ('spring green', [0, 255, 128], []),
+		new Cluster ('cyan', [0, 255, 255], []),
+		new Cluster ('azure', [0, 127, 255], []),
+		new Cluster ('blue', [0, 0, 255], []),
+		new Cluster ('violet', [127, 0, 255], []),
+		new Cluster ('magenta', [255, 0, 255], []),
+		new Cluster ('rose', [255, 0, 128], []),
+		new Cluster ('black', [0, 0, 0], []),
+		new Cluster ('grey', [235, 235, 235], []),
+		new Cluster ('white', [255, 255, 255], []),
+	];
+
+	let VISUALIZATION_MODE = 'basic';
+*/
 
 function main() {
-	localStorage.removeItem('timeSpentOnFunctions');
-	localStorage.setItem('timeSpentOnFunctions', JSON.stringify({}));
-
 	const redirectToChoicesPage = document.querySelector('#redirect-to-choices-page');
 	redirectToChoicesPage.addEventListener('click', () => window.location = '/index.html');
 
@@ -111,9 +133,9 @@ function createRandomColoredBox(quantityOfColorsToBeCreated = 1) {
 	while (i < quantityOfColorsToBeCreated) {
 		const randomColor = getRandomColor();
 		
-		if(COLORS_IN_SCREEN.includes(c => c.colorInHex.hexString === randomColor.colorInHex.hexString)) continue;
+		if(STORE.colors_in_screen.includes(c => c.colorInHex.hexString === randomColor.colorInHex.hexString)) continue;
 			
-		COLORS_IN_SCREEN.push(randomColor);
+		STORE.colors_in_screen.push(randomColor);
 		
 		const colorBoxElement = createRandomColorBoxElement(randomColor);
 		colorContainerDiv.appendChild(colorBoxElement);
@@ -123,12 +145,12 @@ function createRandomColoredBox(quantityOfColorsToBeCreated = 1) {
 }
  
 function alternateBetweenBasicAndComplexVisualizationFunc() {
-	if (VISUALIZATION_MODE === 'basic')  {
+	if (STORE.visualizationMode === 'basic')  {
 		document.querySelector('.container').className = 'container color-container-complex';
-		VISUALIZATION_MODE = 'complex';
+		STORE.visualizationMode = 'complex';
 	} else {
 		document.querySelector('.container').className = 'container color-container-basic';
-		VISUALIZATION_MODE = 'basic';
+		STORE.visualizationMode = 'basic';
 	} 
 }
 
@@ -175,11 +197,11 @@ function updateDivStyle(div, color) {
 function sortColors() {
   const colorContainerDiv = document.querySelector('#color-container');
   
-	const colorsInContainer = [...COLORS_IN_SCREEN]
+	const colorsInContainer = [...STORE.colors_in_screen]
   
   sortWithClusters(colorsInContainer)
 
-  const clustersWithColors = [...CLUSTERS].filter(cluster => cluster.colors.length !== 0);
+  const clustersWithColors = [...STORE.clusters].filter(cluster => cluster.colors.length !== 0);
 	
 	const clusterColors = clustersWithColors.map(cluster => cluster.colors).flat();
 
@@ -195,22 +217,21 @@ function sortColors() {
 
 
 function sortWithClusters(colorsToSort) {
-	CLUSTERS.forEach(cluster => cluster.colors = [])
+	STORE.clusters.forEach(cluster => cluster.colors = [])
   // const clusters = [...]; // as defined above
   colorsToSort.forEach((color) => {
     let minDistance;
     let minDistanceClusterIndex;
-    CLUSTERS.forEach((cluster, clusterIndex) => {
-      const colorRgbArr = [color.colorInRGB.r, color.colorInRGB.g, color.colorInRGB.b];
-      const distance = colorDistance(colorRgbArr, cluster.leadColor);
+    STORE.clusters.forEach((cluster, clusterIndex) => {
+      const distance = colorDistance(color.colorInRGB, cluster.leadColor);
       if (typeof minDistance === 'undefined' || minDistance > distance) {
         minDistance = distance;
         minDistanceClusterIndex = clusterIndex;
       }
     });
-		CLUSTERS[minDistanceClusterIndex].colors.push(color)
+		STORE.clusters[minDistanceClusterIndex].colors.push(color)
   });
-  CLUSTERS.forEach((cluster) => {
+  STORE.clusters.forEach((cluster) => {
 		const dim = ['white', 'grey', 'black'].includes(cluster.name) ? 'lightness' : 'saturation';
     cluster.colors = oneDimensionSorting(cluster.colors, dim)
   });
@@ -218,9 +239,9 @@ function sortWithClusters(colorsToSort) {
 
 function colorDistance(color1, color2) {
   const x =
-    Math.pow(color1[0] - color2[0], 2) +
-    Math.pow(color1[1] - color2[1], 2) +
-    Math.pow(color1[2] - color2[2], 2);
+    Math.pow(color1.r - color2.r, 2) +
+    Math.pow(color1.g - color2.g, 2) +
+    Math.pow(color1.b - color2.b, 2);
   return Math.sqrt(x);
 }
 

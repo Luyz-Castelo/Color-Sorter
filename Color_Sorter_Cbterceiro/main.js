@@ -1,5 +1,4 @@
 import { countTimeSpentOnFunction } from "../helpers/countTimeSpentOnFunction.js";
-import { getLocalStorage } from "../helpers/getLocalStorage.js";
 
 class Color {
   constructor(colorInRgb, colorInHsl, colorInHex) {
@@ -65,6 +64,7 @@ const STORE = {
     new Cluster('white', new RGBColor(255, 255, 255), []),
 	],
 	visualizationMode: 'basic',
+  timeSpentOnFunctions: [],
 };
 
 function main() {
