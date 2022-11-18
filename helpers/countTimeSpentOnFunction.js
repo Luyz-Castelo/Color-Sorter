@@ -1,5 +1,3 @@
-import { setLocalStorage } from "./setLocalStorage.js";
-
 export function countTimeSpentOnFunction(functionToTest, functionArgs, functionName) {
   let functionResult;
   let functionArgsOnStorage;
@@ -33,7 +31,7 @@ export function countTimeSpentOnFunction(functionToTest, functionArgs, functionN
   functionArgsOnStorage = functionArgsValues;
 
   let start, end;
-  let timeSpentOnFunc = 0;
+  let timeSpentOnFunction = 0;
   
   if (functionArgs?.length) {
     start = performance.now();
@@ -45,10 +43,8 @@ export function countTimeSpentOnFunction(functionToTest, functionArgs, functionN
     end = performance.now();
   }
   
-  timeSpentOnFunc += end - start;
-  // `Time to run the function: ${functionNameOnTimerAndStorage}(${functionArgsOnTimer})`
-  setLocalStorage(`${functionNameOnStorage}(${functionArgsOnStorage})`, timeSpentOnFunc);
+  timeSpentOnFunction += end - start;
 
-  return functionResult;
+  return { functionResult, timeSpentOnFunction };
 }
 
