@@ -1,12 +1,12 @@
 export function countTimeSpentOnFunction(functionToTest, functionArgs, functionName) {
   let functionResult;
-  let functionArgsOnStorage;
+  let functionArgsToUse;
 
   const getArgNameAndBaseValue = /(?<=\()(.*?)(?=\))/;
   const getArgBaseValue = /([ ][=][ =])\d+/;
 
   const functionArgsToPass = functionArgs || [];
-  const functionNameOnStorage = functionName || functionToTest.name;
+  const functionNameToUse = functionName || functionToTest.name;
   
   /* add .join(', ') to this variable if you want to show only the values used by this function call */
   const functionArgsValues = functionArgsToPass.map(arg => {
@@ -24,11 +24,11 @@ export function countTimeSpentOnFunction(functionToTest, functionArgs, functionN
 
   /* use this variable if you want to show args names and values */
   // const functionArgsNamesAndValuesUsed = functionArgsNamesWithoutBaseValues.map((arg, index) => {
-  //   return `${arg}: ${functionArgsValues[ifunctionArgsNamesWithoutBaseValuesndex]}`
+  //   return `${arg}: ${functionArgsValues[index]}`
   // });
 
   // assign the value that you want to show here or leave it blank
-  functionArgsOnStorage = functionArgsValues;
+  functionArgsToUse = functionArgsValues;
 
   let start, end;
   let timeSpentOnFunction = 0;
