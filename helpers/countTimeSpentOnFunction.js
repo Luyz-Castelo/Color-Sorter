@@ -44,7 +44,8 @@ export function countTimeSpentOnFunction(functionToTest, functionArgs, functionN
   }
   
   timeSpentOnFunction += end - start;
+  functionResult = functionResult ? functionResult : 'The function tested returns nothing'
 
-  return { functionResult, timeSpentOnFunction };
+  return { functionResult, timeSpentOnFunction, functionTested: { functionName: functionNameToUse, functionArgs: functionArgsToUse } };
 }
 

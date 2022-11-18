@@ -1,9 +1,11 @@
 import { countTimeSpentOnFunction } from "../helpers/countTimeSpentOnFunction.js";
-import { Color } from "../helpers/model/color.js"
-import { RGBColor } from "../helpers/model/rgbColor.js"
-import { HEXColor } from "../helpers/model/hexColor.js"
-import { HSLColor } from "../helpers/model/hslColor.js"
-import { Cluster } from "../helpers/model/cluster.js"
+import { getHashFromString } from "../helpers/getHashFromString.js";
+import { Color } from "../helpers/model/color.js";
+import { RGBColor } from "../helpers/model/rgbColor.js";
+import { HEXColor } from "../helpers/model/hexColor.js";
+import { HSLColor } from "../helpers/model/hslColor.js";
+import { Cluster } from "../helpers/model/cluster.js";
+import { TimeSpentOnFunction } from "../helpers/model/timeSpentOnFunction.js";
 
 // Here the concept of STORE is used, now that i refactored my code
 
@@ -66,16 +68,36 @@ function main() {
   const sortColorContainer = document.querySelector('#order-color-container-button');
 	
   const alternateBetweenBasicAndComplexVisualization = document.querySelector('#alternate-between-basic-and-complex-visualization');
-	// const getTimesSpentOnFunctions = document.querySelector('#get-times-spent-on-functions');
+	const getTimesSpentOnFunctions = document.querySelector('#get-times-spent-on-functions');
 
-  createRandomBoxColor.addEventListener('click', () =>  countTimeSpentOnFunction(createRandomColoredBox, [1], `createRandomColoredBox`));
-  createTenRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [10], `createRandomColoredBox`));
-  createHundredRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [100], `createRandomColoredBox`));
-  createThousandRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [1000], `createRandomColoredBox`));
-  sortColorContainer.addEventListener('click', () => countTimeSpentOnFunction(sortColors));
+  createRandomBoxColor.addEventListener('click', () => {
+    const { timeSpentOnFunction, functionTested } = countTimeSpentOnFunction(createRandomColoredBox, [1], `createRandomColoredBox`);
+
+    updateTimeSpentOnFunctionsValueOnSTORE(timeSpentOnFunction, functionTested.functionName, functionTested.functionArgs)
+  });
+  createTenRandomBoxColor.addEventListener('click', () => {
+    const { timeSpentOnFunction, functionTested } = countTimeSpentOnFunction(createRandomColoredBox, [10], `createRandomColoredBox`);
+
+    updateTimeSpentOnFunctionsValueOnSTORE(timeSpentOnFunction, functionTested.functionName, functionTested.functionArgs)
+  });
+  createHundredRandomBoxColor.addEventListener('click', () => {
+    const { timeSpentOnFunction, functionTested } = countTimeSpentOnFunction(createRandomColoredBox, [100], `createRandomColoredBox`);
+
+    updateTimeSpentOnFunctionsValueOnSTORE(timeSpentOnFunction, functionTested.functionName, functionTested.functionArgs)
+  });
+  createThousandRandomBoxColor.addEventListener('click', () => {
+    const { timeSpentOnFunction, functionTested } = countTimeSpentOnFunction(createRandomColoredBox, [1000], `createRandomColoredBox`);
+
+    updateTimeSpentOnFunctionsValueOnSTORE(timeSpentOnFunction, functionTested.functionName, functionTested.functionArgs)
+  });
+  sortColorContainer.addEventListener('click', () => {
+    const { timeSpentOnFunction, functionTested } = countTimeSpentOnFunction(sortColors);
+
+    updateTimeSpentOnFunctionsValueOnSTORE(timeSpentOnFunction, functionTested.functionName, functionTested.functionArgs)
+  });
 	
 	alternateBetweenBasicAndComplexVisualization.addEventListener('click', alternateBetweenBasicAndComplexVisualizationFunc);
-	// getTimesSpentOnFunctions.addEventListener('click', getLocalStorage);
+	getTimesSpentOnFunctions.addEventListener('click', copyJSONToClipboard);
 }
 
 function getRandomColor() {
@@ -173,11 +195,35 @@ function sortColors() {
 	});
 }
 
+async function copyJSONToClipboard() {
+  await navigator.clipboard.writeText(getTimeSpentOnFunctionsValueOnSTOREAsJSON());
+  alert('JSON copied to clipboard');
+}
 
+function getTimeSpentOnFunctionsValueOnSTOREAsJSON() {
+  return JSON.stringify(JSON.stringify(STORE.timeSpentOnFunctions));
+}
+
+function getTimeSpentOnFunctionValueOnSTORE(hash) {
+  return STORE.timeSpentOnFunctions.find(f => f.hashedDisplayName === hash);
+}
+
+function updateTimeSpentOnFunctionsValueOnSTORE(timeSpentOnFunction, functionName, functionArgs) {
+  const functionDisplayName = `${functionName}(${functionArgs})`;
+  const hashedDisplayName = getHashFromString(functionDisplayName);
+
+  const functionValueAlreadyInSTORE = getTimeSpentOnFunctionValueOnSTORE(hashedDisplayName);
+
+  if(functionValueAlreadyInSTORE) {
+    functionValueAlreadyInSTORE.totalTimeSpentOnFunction = functionValueAlreadyInSTORE.totalTimeSpentOnFunction + timeSpentOnFunction;
+    functionValueAlreadyInSTORE.quantityOfTimesItWasCalled += 1;
+  } else {
+    STORE.timeSpentOnFunctions.push(new TimeSpentOnFunction(timeSpentOnFunction, functionDisplayName));
+  }
+}
 
 // -----------------------------------------------------------------------------------
 // Adapted code that i've copied from the internet
-
 
 function sortWithClusters(colorsToSort) {
 	STORE.clusters.forEach(cluster => cluster.colors = [])
@@ -220,8 +266,6 @@ function oneDimensionSorting(colors, dim) {
       }
     });
 }
-
-
 
 // -----------------------------------------------------------------------------------
 
