@@ -1,11 +1,9 @@
 import { countTimeSpentOnFunction } from "../helpers/countTimeSpentOnFunction.js";
-import { getHashFromString } from "../helpers/getHashFromString.js";
 import { Color } from "../helpers/model/color.js";
 import { RGBColor } from "../helpers/model/rgbColor.js";
 import { HEXColor } from "../helpers/model/hexColor.js";
 import { HSLColor } from "../helpers/model/hslColor.js";
 import { Cluster } from "../helpers/model/cluster.js";
-import { TimeSpentOnFunction } from "../helpers/model/timeSpentOnFunction.js";
 
 // Here the concept of STORE is used, now that i refactored my code
 
@@ -29,7 +27,6 @@ const STORE = {
     new Cluster('white', new RGBColor(255, 255, 255), []),
 	],
 	visualizationMode: 'basic',
-  timeSpentOnFunctions: [],
 };
 
 /*
@@ -66,38 +63,16 @@ function main() {
   const createHundredRandomBoxColor = document.querySelector('#create-hundred-random-box-color-button');
   const createThousandRandomBoxColor = document.querySelector('#create-thousand-random-box-color-button');
   const sortColorContainer = document.querySelector('#order-color-container-button');
-	
+
   const alternateBetweenBasicAndComplexVisualization = document.querySelector('#alternate-between-basic-and-complex-visualization');
-	const getTimesSpentOnFunctions = document.querySelector('#get-times-spent-on-functions');
 
-  createRandomBoxColor.addEventListener('click', () => {
-    const { timeSpentOnFunction, functionTested } = countTimeSpentOnFunction(createRandomColoredBox, [1], `createRandomColoredBox`);
+  createRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [1], `createRandomColoredBox`));
+  createTenRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [10], `createRandomColoredBox`));
+  createHundredRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [100], `createRandomColoredBox`));
+  createThousandRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [1000], `createRandomColoredBox`));
+  sortColorContainer.addEventListener('click', () => countTimeSpentOnFunction(sortColors));
 
-    updateTimeSpentOnFunctionsValueOnSTORE(timeSpentOnFunction, functionTested.functionName, functionTested.functionArgs)
-  });
-  createTenRandomBoxColor.addEventListener('click', () => {
-    const { timeSpentOnFunction, functionTested } = countTimeSpentOnFunction(createRandomColoredBox, [10], `createRandomColoredBox`);
-
-    updateTimeSpentOnFunctionsValueOnSTORE(timeSpentOnFunction, functionTested.functionName, functionTested.functionArgs)
-  });
-  createHundredRandomBoxColor.addEventListener('click', () => {
-    const { timeSpentOnFunction, functionTested } = countTimeSpentOnFunction(createRandomColoredBox, [100], `createRandomColoredBox`);
-
-    updateTimeSpentOnFunctionsValueOnSTORE(timeSpentOnFunction, functionTested.functionName, functionTested.functionArgs)
-  });
-  createThousandRandomBoxColor.addEventListener('click', () => {
-    const { timeSpentOnFunction, functionTested } = countTimeSpentOnFunction(createRandomColoredBox, [1000], `createRandomColoredBox`);
-
-    updateTimeSpentOnFunctionsValueOnSTORE(timeSpentOnFunction, functionTested.functionName, functionTested.functionArgs)
-  });
-  sortColorContainer.addEventListener('click', () => {
-    const { timeSpentOnFunction, functionTested } = countTimeSpentOnFunction(sortColors);
-
-    updateTimeSpentOnFunctionsValueOnSTORE(timeSpentOnFunction, functionTested.functionName, functionTested.functionArgs)
-  });
-	
 	alternateBetweenBasicAndComplexVisualization.addEventListener('click', alternateBetweenBasicAndComplexVisualizationFunc);
-	getTimesSpentOnFunctions.addEventListener('click', copyJSONToClipboard);
 }
 
 function getRandomColor() {
@@ -108,7 +83,7 @@ function getRandomColor() {
   const colorInRGB = new RGBColor(r, g, b)
   const colorInHsl = new HSLColor(r, g, b)
 	const colorInHex = new HEXColor(r, g, b)
-  
+
   return new Color(colorInRGB, colorInHsl, colorInHex)
 }
 
@@ -117,18 +92,18 @@ function createRandomColoredBox(quantityOfColorsToBeCreated = 1) {
 	let i = 0;
 	while (i < quantityOfColorsToBeCreated) {
 		const randomColor = getRandomColor();
-		
+
 		if(STORE.colors_in_screen.includes(c => c.colorInHex.hexString === randomColor.colorInHex.hexString)) continue;
-			
+
 		STORE.colors_in_screen.push(randomColor);
-		
+
 		const colorBoxElement = createRandomColorBoxElement(randomColor);
 		colorContainerDiv.appendChild(colorBoxElement);
-		
+
 		i++;
 	}
 }
- 
+
 function alternateBetweenBasicAndComplexVisualizationFunc() {
 	if (STORE.visualizationMode === 'basic')  {
 		document.querySelector('.container').className = 'container color-container-complex';
@@ -136,7 +111,7 @@ function alternateBetweenBasicAndComplexVisualizationFunc() {
 	} else {
 		document.querySelector('.container').className = 'container color-container-basic';
 		STORE.visualizationMode = 'basic';
-	} 
+	}
 }
 
 function createRandomColorBoxElement(randomColor) {
@@ -157,7 +132,7 @@ function createDivWithStyle(randomColor) {
   div.style.backgroundColor = randomColor.colorInHex.hexString;
   div.style.display = 'flex';
   div.style.justifyContent = 'center';
-  
+
   return div;
 }
 
@@ -181,45 +156,18 @@ function updateDivStyle(div, color) {
 
 function sortColors() {
   const colorContainerDiv = document.querySelector('#color-container');
-  
+
 	const colorsInContainer = [...STORE.colors_in_screen]
-  
+
   sortWithClusters(colorsInContainer)
 
   const clustersWithColors = [...STORE.clusters].filter(cluster => cluster.colors.length !== 0);
-	
+
 	const clusterColors = clustersWithColors.map(cluster => cluster.colors).flat();
 
 	colorContainerDiv.childNodes.forEach((node, index) => {
 		updateDivStyle(node, clusterColors[index]);
 	});
-}
-
-async function copyJSONToClipboard() {
-  await navigator.clipboard.writeText(getTimeSpentOnFunctionsValueOnSTOREAsJSON());
-  alert('JSON copied to clipboard');
-}
-
-function getTimeSpentOnFunctionsValueOnSTOREAsJSON() {
-  return JSON.stringify(JSON.stringify(STORE.timeSpentOnFunctions));
-}
-
-function getTimeSpentOnFunctionValueOnSTORE(hash) {
-  return STORE.timeSpentOnFunctions.find(f => f.hashedDisplayName === hash);
-}
-
-function updateTimeSpentOnFunctionsValueOnSTORE(timeSpentOnFunction, functionName, functionArgs) {
-  const functionDisplayName = `${functionName}(${functionArgs})`;
-  const hashedDisplayName = getHashFromString(functionDisplayName);
-
-  const functionValueAlreadyInSTORE = getTimeSpentOnFunctionValueOnSTORE(hashedDisplayName);
-
-  if(functionValueAlreadyInSTORE) {
-    functionValueAlreadyInSTORE.totalTimeSpentOnFunction = functionValueAlreadyInSTORE.totalTimeSpentOnFunction + timeSpentOnFunction;
-    functionValueAlreadyInSTORE.quantityOfTimesItWasCalled += 1;
-  } else {
-    STORE.timeSpentOnFunctions.push(new TimeSpentOnFunction(timeSpentOnFunction, functionDisplayName));
-  }
 }
 
 // -----------------------------------------------------------------------------------

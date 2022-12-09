@@ -1,19 +1,17 @@
 export function countTimeSpentOnFunction(functionToTest, functionArgs, functionName) {
   let functionResult;
-  let functionArgsToUse;
-
   const getArgNameAndBaseValue = /(?<=\()(.*?)(?=\))/;
   const getArgBaseValue = /([ ][=][ =])\d+/;
 
   const functionArgsToPass = functionArgs || [];
-  const functionNameToUse = functionName || functionToTest.name;
-  
+  const functionNameOnTimer = functionName || functionToTest.name;
+
   /* add .join(', ') to this variable if you want to show only the values used by this function call */
   const functionArgsValues = functionArgsToPass.map(arg => {
     if (arg.nodeName) return JSON.stringify(arg, ['tagName', 'className']);
     return JSON.stringify(arg);
   });
-  
+
   /* use this variable if you want to show the args names and base values */
   // const functionArgsNamesAndBaseValues = functionToTest.toString().match(getArgNameAndBaseValue)[0];
 
@@ -28,24 +26,17 @@ export function countTimeSpentOnFunction(functionToTest, functionArgs, functionN
   // });
 
   // assign the value that you want to show here or leave it blank
-  functionArgsToUse = functionArgsValues;
+  const functionArgsOnTimer = functionArgsValues;
 
-  let start, end;
-  let timeSpentOnFunction = 0;
-  
   if (functionArgs?.length) {
-    start = performance.now();
+    console.time(`Time to run the function: ${functionNameOnTimer}(${functionArgsOnTimer})`)
     functionResult = functionToTest(...functionArgsToPass);
-    end = performance.now();
+    console.timeEnd(`Time to run the function: ${functionNameOnTimer}(${functionArgsOnTimer})`)
   } else {
-    start = performance.now();
+    console.time(`Time to run the function: ${functionNameOnTimer}()`)
     functionResult = functionToTest();
-    end = performance.now();
+    console.timeEnd(`Time to run the function: ${functionNameOnTimer}()`)
   }
-  
-  timeSpentOnFunction += end - start;
-  functionResult = functionResult ? functionResult : 'The function tested returns nothing'
 
-  return { functionResult, timeSpentOnFunction, functionTested: { functionName: functionNameToUse, functionArgs: functionArgsToUse } };
+  return functionResult;
 }
-

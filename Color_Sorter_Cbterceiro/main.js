@@ -27,7 +27,6 @@ const STORE = {
     new Cluster('white', new RGBColor(255, 255, 255), []),
 	],
 	visualizationMode: 'basic',
-  timeSpentOnFunctions: [],
 };
 
 function main() {
@@ -39,18 +38,16 @@ function main() {
   const createHundredRandomBoxColor = document.querySelector('#create-hundred-random-box-color-button');
   const createThousandRandomBoxColor = document.querySelector('#create-thousand-random-box-color-button');
   const sortColorContainer = document.querySelector('#sort-color-container-button')
-  
+
   const alternateBetweenBasicAndComplexVisualization = document.querySelector('#alternate-between-basic-and-complex-visualization');
-  // const getTimesSpentOnFunctions = document.querySelector('#get-times-spent-on-functions');
 
   createRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [1]));
   createTenRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [10]));
   createHundredRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [100]));
   createThousandRandomBoxColor.addEventListener('click', () => countTimeSpentOnFunction(createRandomColoredBox, [1000]));
   sortColorContainer.addEventListener('click', () => countTimeSpentOnFunction(sortColors))
-  
+
 	alternateBetweenBasicAndComplexVisualization.addEventListener('click', alternateBetweenBasicAndComplexVisualizationFunc)
-  // getTimesSpentOnFunctions.addEventListener('click', getLocalStorage);
 }
 
 function getRandomColor() {
@@ -230,6 +227,5 @@ function oneDimensionSorting(colors, dim) {
 }
 
 // -----------------------------------------------------------------------------------
-
 
 main();
